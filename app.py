@@ -6,7 +6,7 @@ from flask import Flask, redirect, render_template, request, url_for
 app = Flask(__name__)
 
 # Initialize DynamoDB client (uses IAM role attached to EC2)
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name='eu-north-1')
 table_name = os.environ.get('DYNAMODB_TABLE', 'Todos')
 table = dynamodb.Table(table_name)
 
