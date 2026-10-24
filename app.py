@@ -3,7 +3,7 @@ import uuid
 import boto3
 from flask import Flask, redirect, render_template, request, url_for
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='Website')
 
 # Initialize DynamoDB client (uses IAM role attached to EC2)
 dynamodb = boto3.resource('dynamodb', region_name='eu-north-1')
