@@ -29,11 +29,20 @@ def add():
   return redirect(url_for('index'))
 
 
-@app.route('/delete/<todo_id>', methods=['POST'])
-def delete(todo_id):
-  table.delete_item(Key={'todo_id': todo_id})
-  return redirect(url_for('index'))
+@app.route('/delete/<todo_id>')
+def delete_todo(todo_id):
+    # Deletes the item from your DynamoDB 'Todos' table
+    table.delete_item(
+        Key={
+            'id': todo_id  # (Change 'id' to whatever your primary partition key name is in DynamoDB, e.g., 'todo_id')
+        }
+    )
+    return redirect(url_for('index'))
 
+@app.route('/complete/<todo_id>')
+def complete_todo(todo_id):
+    # Optional: Update status in DynamoDB if you track completion
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=80)
