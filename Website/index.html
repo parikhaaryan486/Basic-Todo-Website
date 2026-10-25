@@ -1,35 +1,168 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="h-full">
 <head>
-    <title>AWS To-Do Application</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo Workspace</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#0F172A',
+                        cardBg: '#1E293B',
+                        cardBorder: '#334155',
+                        accentViolet: '#8B5CF6',
+                        accentIndigo: '#6366F1',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 50px; background: #f4f4f9; }
-        .container { max-width: 600px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
-        input[type="text"] { width: 70%; padding: 8px; margin-right: 10px; }
-        button { padding: 8px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        ul { list-style-type: none; padding: 0; }
-        li { padding: 10px; background: #eee; margin-top: 5px; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; }
-        .delete-btn { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
+        body {
+            background-color: #0F172A;
+            color: #F8FAFC;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #A78BFA 0%, #818CF8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-btn {
+            background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+        }
+        .gradient-btn:hover {
+            background: linear-gradient(135deg, #6D28D9 0%, #4338CA 100%);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h2>AWS Cloud Practical - To-Do List</h2>
-        <form action="/add" method="POST">
-            <input type="text" name="title" placeholder="Enter new task..." required>
-            <button type="submit">Add Task</button>
-        </form>
-        <h3>Tasks:</h3>
-        <ul>
-            {% for todo in todos %}
-                <li>
-                    <span>{{ todo.title }}</span>
-                    <form action="/delete/{{ todo.todo_id }}" method="POST" style="margin:0;">
-                        <button type="submit" class="delete-btn">Delete</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+<body class="h-full flex flex-col justify-between font-sans antialiased text-slate-100">
+
+    <!-- Top Navigation / Header -->
+    <header class="w-full border-b border-slate-800 bg-slate-900/60 backdrop-blur px-6 py-4">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-check-double text-white text-base"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-white">TaskFlow</span>
+            </div>
+            <div class="flex items-center space-x-2 text-xs font-medium text-slate-400 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700/50">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>DynamoDB Active</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container Centered -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8">
+        <div class="w-full max-w-xl glass-card rounded-2xl shadow-2xl p-6 sm:p-8 my-auto">
+            
+            <!-- App Title & Subtitle -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
+                    Manage Your <span class="gradient-text">Tasks</span>
+                </h1>
+                <p class="text-slate-400 text-sm sm:text-base">Stay organized and focused on your goals</p>
+            </div>
+
+            <!-- Add Task Form -->
+            <form action="/add" method="POST" class="mb-8">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                            <i class="fa-solid fa-plus text-sm"></i>
+                        </div>
+                        <input 
+                            type="text" 
+                            name="title" 
+                            placeholder="Add a new task..." 
+                            required 
+                            class="w-full pl-10 pr-4 py-3 bg-slate-900/80 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 rounded-xl text-sm placeholder-slate-500 outline-none transition duration-200 text-white shadow-inner"
+                        >
+                    </div>
+                    <button 
+                        type="submit" 
+                        class="gradient-btn text-white font-medium px-6 py-3 rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-95 transition duration-200 text-sm flex items-center justify-center gap-2 shrink-0"
+                    >
+                        <span>Add Task</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Task List Header Stats -->
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-700/60 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <span>Tasks List</span>
+                <span class="bg-indigo-500/10 text-indigo-400 px-2.5 py-1 rounded-md border border-indigo-500/20">
+                    {{ todos|length if todos else 0 }} Items
+                </span>
+            </div>
+
+            <!-- Task List Container -->
+            <ul class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+                {% if todos %}
+                    {% for todo in todos %}
+                    <li class="group flex items-center justify-between p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 hover:border-slate-600 hover:bg-slate-800 transition duration-200 shadow-sm">
+                        <div class="flex items-center space-x-3.5 min-w-0 pr-3">
+                            <!-- Toggle Complete Button / Indicator -->
+                            <form action="/update/{{ todo.id }}" method="POST" class="shrink-0 flex items-center">
+                                <button type="submit" class="w-5 h-5 rounded-md border flex items-center justify-center transition duration-150 {{ 'bg-emerald-500 border-emerald-500 text-slate-950' if todo.completed else 'border-slate-600 hover:border-indigo-400 text-transparent' }}">
+                                    <i class="fa-solid fa-check text-xs font-bold"></i>
+                                </button>
+                            </form>
+                            
+                            <!-- Task Title -->
+                            <span class="text-sm sm:text-base font-medium truncate transition duration-150 {{ 'line-through text-slate-500' if todo.completed else 'text-slate-200 group-hover:text-white' }}">
+                                {{ todo.title }}
+                            </span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center space-x-2 shrink-0">
+                            <!-- Delete Button -->
+                            <form action="/delete/{{ todo.id }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this task?');">
+                                <button type="submit" title="Delete Task" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition duration-150">
+                                    <i class="fa-regular fa-trash-can text-sm"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <!-- Empty State -->
+                    <div class="text-center py-12 px-4 rounded-xl border border-dashed border-slate-700/80 bg-slate-900/30">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-slate-800 flex items-center justify-center text-slate-500">
+                            <i class="fa-regular fa-clipboard text-xl"></i>
+                        </div>
+                        <p class="text-slate-300 font-medium text-sm">No tasks added yet</p>
+                        <p class="text-slate-500 text-xs mt-1">Add your first task above to get started!</p>
+                    </div>
+                {% endif %}
+            </ul>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-4 text-center text-xs text-slate-500 border-t border-slate-800/60 bg-slate-900/40">
+        <p>Flask & AWS DynamoDB To-Do Application • EC2 Auto Scaling Enabled</p>
+    </footer>
+
 </body>
 </html>
